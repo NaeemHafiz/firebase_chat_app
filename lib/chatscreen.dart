@@ -27,8 +27,7 @@ class ChatScreen extends StatelessWidget {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            StreamBuilder(
-                stream: dbRef.onValue,
+            StreamBuilder(stream: dbRef.onValue,
                 builder: (context, AsyncSnapshot<Event> snapshot) {
                   if (snapshot.hasData) {
                     lists.clear();
