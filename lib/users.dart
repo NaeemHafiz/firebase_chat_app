@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_chat_app/chatscreen.dart';
+import 'package:firebase_chat_app/constant.dart';
+import 'package:firebase_chat_app/models/chat_model.dart';
+import 'package:firebase_chat_app/models/user_model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -7,9 +10,10 @@ class User extends StatelessWidget {
   final ScrollController listScrollController = ScrollController();
   var dbRef;
   List<Map<dynamic, dynamic>> lists = [];
+  List<UserModel> UserList = [];
 
   User() {
-    dbRef = FirebaseDatabase.instance.reference().child("Users");
+    dbRef = FirebaseDatabase.instance.reference().child(Constant.USER_TABLE);
   }
 
   @override
@@ -21,6 +25,8 @@ class User extends StatelessWidget {
           if (snapshot.hasData) {
             lists.clear();
             DataSnapshot dataValues = snapshot.data.snapshot;
+            UserModel userModel = UserModel.fromSnapshot(dataValues);
+            var sss = UserModel.fromMap(dataValues);
             Map<dynamic, dynamic> values = dataValues.value;
             values.forEach((key, values) {
               lists.add(values);
@@ -29,7 +35,6 @@ class User extends StatelessWidget {
               shrinkWrap: true,
               itemCount: lists.length,
               scrollDirection: Axis.vertical,
-              controller: listScrollController,
               itemBuilder: (context, index) {
                 return buildItem(index, context);
               },

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_chat_app/constant.dart';
 
 class ChatScreen extends StatelessWidget {
   final ScrollController listScrollController = ScrollController();
@@ -9,8 +10,12 @@ class ChatScreen extends StatelessWidget {
   List<Map<dynamic, dynamic>> lists = [];
 
   ChatScreen() {
-    dbRef = FirebaseDatabase.instance.reference().child("Chat");
+    dbRef = FirebaseDatabase.instance
+        .reference()
+        .child(Constant.CHAT_TABLE)
+        .orderByChild(Constant.CHAT_TABLE_DATE);
   }
+
   @override
   Widget build(BuildContext context) {
     // <1> Use StreamBuilder
@@ -27,7 +32,8 @@ class ChatScreen extends StatelessWidget {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            StreamBuilder(stream: dbRef.onValue,
+            StreamBuilder(
+                stream: dbRef.onValue,
                 builder: (context, AsyncSnapshot<Event> snapshot) {
                   if (snapshot.hasData) {
                     lists.clear();
@@ -68,7 +74,7 @@ class ChatScreen extends StatelessWidget {
               child: TextFormField(
                 cursorColor: Colors.black,
                 validator: (value) =>
-                value.isEmpty ? 'Message cannot be blank' : null,
+                    value.isEmpty ? 'Message cannot be blank' : null,
                 controller: textEditingController,
                 decoration: InputDecoration(
                     border: InputBorder.none, hintText: 'Enter a Message...'),
@@ -93,8 +99,7 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
-  Widget buildItem(
-      int index,BuildContext buildContext) {
+  Widget buildItem(int index, BuildContext buildContext) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -130,7 +135,6 @@ class ChatScreen extends StatelessWidget {
   }
 
   Widget sendMessage() {
-    dbRef.push()
-        .set({"Message": textEditingController.text});
+    dbRef.push().set({"Message": textEditingController.text});
   }
 }
